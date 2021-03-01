@@ -3,7 +3,7 @@
 # url страницы материала +
 # Заголовок материала+
 # Первое изображение материала (Ссылка) +
-# (найти как преобразовать <img alt="" src=" ...)
+# (найти как преобразовать <img alt="" src=" ...)+
 # Дата публикации+   !!!!!( выведено в обычном виде,
 # переделать в datetime)
 # имя автора материала+
@@ -65,7 +65,7 @@ class GbBlogParse:
             "post_data": {
                 "title": soup.find("h1", attrs={"class": "blogpost-title"}).text,
                 "url": url,
-                "image_url": soup.find("div", attrs={"itemprop": "articleBody"}).img,
+                "image_url": soup.find('div', attrs={'class': 'hidden', 'itemprop': "image"}).text,
                 "date_publ": soup.find("time", attrs={"itemprop": "datePublished"}).text,
                 "id": soup.find("comments").attrs.get("commentable-id"),
             },
@@ -85,6 +85,7 @@ class GbBlogParse:
         api_path = f"/api/v2/comments?commentable_type=Post&commentable_id={post_id}&order=desc"
         response = self._get_response(urljoin(self.start_url, api_path))
         data = response.json()
+        print(data)
         return data
 
     def parse_feed(self, url, soup):

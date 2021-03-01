@@ -1,3 +1,4 @@
+import datetime as dt
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -49,5 +50,15 @@ class Tag(Base, IdMixin, NameMixin, UrlMixin):
 class Comment(Base):
     __tablename__ = "comment"
     id = Column(Integer, primary_key=True)
+    parent_id
+    root_comment_id
+    likes_count
+    body
+    html
+    created_at - дейттайм '2021-02-22T14:42:03.547+03:00' строчный dt.datetime.fromisoformat()
+    date_formatted '22 февраля 2021 в 14:42'
+
     author_id = Column(Integer, ForeignKey("author.id"))
+    full_name
+    url
     post_id = Column(Integer, ForeignKey("post.id"))
