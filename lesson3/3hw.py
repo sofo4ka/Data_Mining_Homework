@@ -1,19 +1,21 @@
-# Необходимо обойти все записи в блоге и извлеч из них информацию следующих полей:
+# Необходимо обойти все записи в блоге и извлечь из них информацию следующих полей:
 #
-# url страницы материала
-# Заголовок материала
-# Первое изображение материала (Ссылка)
-# Дата публикации (в формате datetime)
-# имя автора материала
-# ссылка на страницу автора материала
-# комментарии в виде (автор комментария и текст комментария)
-# список тегов
+# url страницы материала +
+# Заголовок материала+
+# Первое изображение материала (Ссылка) +
+# (найти как преобразовать <img alt="" src=" ...)
+# Дата публикации+   !!!!!( выведено в обычном виде,
+# переделать в datetime)
+# имя автора материала+
+# ссылка на страницу автора материала+
+# комментарии в виде (автор комментария и текст комментария)+
+# список тегов+
 # реализовать SQL структуру хранения данных c следующими таблицами
 #
-# Post
+# Post+
 # Comment
-# Writer
-# Tag
+# Writer+
+# Tag+
 # Организовать реляционные связи между таблицами
 #
 # При сборе данных учесть, что полученый из данных автор уже может быть в БД и значит необходимо это заблаговременно проверить.
@@ -23,12 +25,12 @@
 import requests
 import bs4
 from urllib.parse import urljoin
-from ignoring.database.db import Database
+from lesson3.db import Database
 
 
 """
-FIFO
-FILO
+FIFO - first input first output
+FILO - first input last output
 """
 
 
@@ -63,6 +65,9 @@ class GbBlogParse:
             "post_data": {
                 "title": soup.find("h1", attrs={"class": "blogpost-title"}).text,
                 "url": url,
+                "image_url": soup.find("div", attrs={"itemprop": "articleBody"}).img,
+                "date_publ": soup.find("time", attrs={"itemprop": "datePublished"}).text,
+                "id": soup.find("comments").attrs.get("commentable-id"),
             },
             "author_data": {
                 "url": urljoin(url, author_tag.parent.attrs.get("href")),
@@ -72,7 +77,14 @@ class GbBlogParse:
                 {"name": tag.text, "url": urljoin(url, tag.attrs.get("href"))}
                 for tag in soup.find_all("a", attrs={"class": "small"})
             ],
+            "comments_data": self._get_comments(soup.find("comments").attrs.get("commentable-id")),
         }
+        return data
+
+    def _get_comments(self, post_id):
+        api_path = f"/api/v2/comments?commentable_type=Post&commentable_id={post_id}&order=desc"
+        response = self._get_response(urljoin(self.start_url, api_path))
+        data = response.json()
         return data
 
     def parse_feed(self, url, soup):
@@ -104,7 +116,6 @@ class GbBlogParse:
                 self.save(task_result)
 
     def save(self, data):
-        print(1)
         self.db.create_post(data)
 
 

@@ -1,7 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, ForeignKey, Table, Boolean
 
 
 Base = declarative_base()
@@ -29,10 +29,12 @@ tag_post = Table(
 
 class Post(Base, IdMixin, UrlMixin):
     __tablename__ = "post"
+    id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
     author_id = Column(Integer, ForeignKey("author.id"))
     author = relationship("Author")
     tags = relationship("Tag", secondary=tag_post)
+    comments = relationship("Comment")
 
 
 class Author(Base, IdMixin, NameMixin, UrlMixin):
@@ -43,3 +45,9 @@ class Author(Base, IdMixin, NameMixin, UrlMixin):
 class Tag(Base, IdMixin, NameMixin, UrlMixin):
     __tablename__ = "tag"
     posts = relationship("Post", secondary=tag_post)
+
+class Comment(Base):
+    __tablename__ = "comment"
+    id = Column(Integer, primary_key=True)
+    author_id = Column(Integer, ForeignKey("author.id"))
+    post_id = Column(Integer, ForeignKey("post.id"))

@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from lesson3j import models
+from lesson3 import models
 
 
 class Database:
