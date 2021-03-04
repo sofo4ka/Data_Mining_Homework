@@ -65,21 +65,14 @@ class AutoyoulaSpider(scrapy.Spider):
         return characteristics_list
 
     def car_parse(self, response):
-        """
-            # Собрать след стуркутру и сохранить в БД Монго
-            # Название объявления+
-            # Список фото объявления (ссылки)+
-            # Список характеристик
-            # Описание объявления
-            # ссылка на автора объявления
-            # дополнительно попробуйте вытащить телефона
-        """
         items = {
             "title": response.css("div.AdvertCard_advertTitle__1S1Ak::text").extract_first().strip(),
             "picture": [img.attrib.get("src") for img in response.css("figure.PhotoGallery_photo__36e_r img")],
             "characteristics": AutoyoulaSpider.get_characteristics(response),
             "author": AutoyoulaSpider.get_author_id(response),
             "price": int(("").join(response.css("div.AdvertCard_price__3dDCr::text").get().split("\u2009"))),
+            "description": response.css("div.AdvertCard_descriptionInner__KnuRi::text").get(),
+
         }
         data = {}
         for key, css_selector in items.items():
@@ -89,4 +82,3 @@ class AutoyoulaSpider(scrapy.Spider):
                 #print(Exception, err)
                 continue
         self.db_client["gb_parse"][self.name].insert_one(data)
-        c = 1
