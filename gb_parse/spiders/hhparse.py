@@ -18,21 +18,18 @@ class HhparseSpider(scrapy.Spider):
         for link in vacancies_list:
             yield response.follow(link, callback=self.vacancy_parse)
 
-    # author_info_xpaths = {
-    #     "employer_name": "//span//text",
-    #     "employer_website": '//a[@class="g-user-content"]/@href',
-    #     "employer_areas": '//div[@class="bloko-text-emphasis"]//text()',
-    #     "employer_description": '//div[@class="company-description"]//text()',
-    # }
-
     def vacancy_parse(self, response, *args, **kwargs):
-        vacancy_title = response.xpath('//h1[@class="bloko-header-1"]/text()').extract_first()
-        salary = ''.join(response.css('span.bloko-header-2::text').extract())
-        # ''.join(response.xpath('//p/span[@class="bloko-header-2 bloko-header-2_lite"]/text()').extract())
-        description = response.xpath("//div[@class='vacancy-section']//text()").extract()
-        key_skills = response.xpath("//span[@class='bloko-tag__section bloko-tag__section_text']/text()").extract()
+        vacancy_title = response.xpath('//h1[@class="bloko-header-1"]'
+                                       '/text()').extract_first()
+        salary = ''.join(response.xpath('//p/span[@class="bloko-header-2'
+                                        ' bloko-header-2_lite"]/text()').extract())
+        description = ''.join(response.xpath("//div[@class='vacancy-section']"
+                                             "//text()").extract())
+        key_skills = response.xpath("//span[@class='bloko-tag__section "
+                                    "bloko-tag__section_text']/text()").extract()
         author = response.xpath("//a[@class='vacancy-company-name']/@href").get()
         author_page = f'{"https://hh.ru/"}{author}'
+        yield scrapy.Request(author_page, callback=self.employer_parse)
 
         yield HhparseItem(vacancy_title=vacancy_title,
                           salary=salary,
@@ -41,4 +38,12 @@ class HhparseSpider(scrapy.Spider):
                           author=author,
                           )
 
-
+    def employer_parse(self, response, author_page, *args, **kwargs):
+        author_info = {
+            "employer_name": response.xpath('//h1/span[@class="company-header-title-name/text()"]'),
+            "employer_website": response.xpath('//a[@class="g-user-content"]/@href'),
+            "employer_areas": response.xpath('//div[@class="bloko-text-emphasis"]//text()'),
+            "employer_description": response.xpath('//div[@class="company-description"]//text()'),
+        }
+        print(author_info)
+        yield HhparseItem(author_info=author_info)
