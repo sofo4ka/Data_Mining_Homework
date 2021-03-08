@@ -1,4 +1,5 @@
 import scrapy
+from ..items import HhparseItem
 
 
 class HhparseSpider(scrapy.Spider):
@@ -18,10 +19,15 @@ class HhparseSpider(scrapy.Spider):
             yield response.follow(link, callback=self.vacancy_parse)
 
     def vacancy_parse(self, response, *args, **kwargs):
-        # потом переписать через HhparseLoader
         vacancy_title = response.css('h1.bloko-header-1::text').extract_first()
         salary = ''.join(response.css('span.bloko-header-2::text').extract())
-
-
-        print(vacancy_title, salary)
-        yield HhparseItem(vacancy_title=vacancy_title, salary=salary)
+        description = response.xpath("//div[@class='vacancy-section']//text()").extract()
+        key_skills = response.xpath("//span[@class='bloko-tag__section bloko-tag__section_text']/text()").extract()
+        author = response.xpath("//a[@class='vacancy-company-name']/@href").get()
+        yield HhparseItem(vacancy_title=vacancy_title,
+                          salary=salary,
+                          description=description,
+                          key_skills=key_skills,
+                          author=author,
+                          # author_info=author_info
+                          )

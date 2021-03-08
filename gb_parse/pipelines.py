@@ -17,7 +17,7 @@ class GbParsePipeline:
 class GbParseMongoPipeline:
     def __init__(self):
         client = pymongo.MongoClient()
-        self.db = client["gb_parse_xpath"]
+        self.db = client["gb_parse_hh"]
 
     def process_item(self, item, spider):
         self.db[spider.name].insert_one(item)

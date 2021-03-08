@@ -21,10 +21,12 @@ class GbAutoYoulaItem(scrapy.Item):
     descriptions = scrapy.Field()
     author = scrapy.Field()
 
+
 class HhparseItem(scrapy.Item):
-    url = scrapy.Field()
+    _id = scrapy.Field()
     vacancy_title = scrapy.Field()
     salary = scrapy.Field()
-    descriptions = scrapy.Field()
+    description = scrapy.Field()
     key_skills = scrapy.Field()
     author = scrapy.Field()
+    author_info = scrapy.Field()
