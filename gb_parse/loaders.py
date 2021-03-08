@@ -2,7 +2,7 @@ from scrapy.loader import ItemLoader
 from scrapy import Selector
 from itemloaders.processors import TakeFirst, MapCompose
 from .items import GbAutoYoulaItem
-
+from .items import HhparseItem
 
 def get_characteristics(item):
     selector = Selector(text=item)
@@ -22,3 +22,10 @@ class AutoyoulaLoader(ItemLoader):
     url_out = TakeFirst()
     title_out = TakeFirst()
     characteristics_in = MapCompose(get_characteristics)
+
+class HhparseLoader(ItemLoader):
+    default_item_class = dict
+    url_out = TakeFirst()
+    title_out = TakeFirst()
+    characteristics_in = MapCompose(get_characteristics)
+
