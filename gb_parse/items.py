@@ -22,11 +22,21 @@ class GbAutoYoulaItem(scrapy.Item):
     author = scrapy.Field()
 
 
-class HhparseItem(scrapy.Item):
-    _id = scrapy.Field()
-    vacancy_title = scrapy.Field()
-    salary = scrapy.Field()
-    description = scrapy.Field()
-    key_skills = scrapy.Field()
-    author = scrapy.Field()
-    author_info = scrapy.Field()
+class InstagramTagItem(scrapy.Item):
+    url = scrapy.Field()
+    id = scrapy.Field()
+    name = scrapy.Field()
+    allow_following = scrapy.Field()
+    is_following = scrapy.Field()
+    is_top_media_only = scrapy.Field()
+    profile_pic_url = scrapy.Field()
+    edge_hashtag_to_top_posts = scrapy.Field()
+
+# class HhparseItem(scrapy.Item):
+#     _id = scrapy.Field()
+#     vacancy_title = scrapy.Field()
+#     salary = scrapy.Field()
+#     description = scrapy.Field()
+#     key_skills = scrapy.Field()
+#     author = scrapy.Field()
+#     author_info = scrapy.Field()
